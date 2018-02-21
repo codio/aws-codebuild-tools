@@ -2,6 +2,8 @@
 
 set -x
 
+env
+
 if [ ! -n "${FLOWDOCK_NOTIFY_TOKEN}" ]; then
   error 'Please specify the token property'
   exit 1
