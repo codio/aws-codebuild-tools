@@ -7,28 +7,22 @@ if [ ! -n "${FLOWDOCK_NOTIFY_TOKEN}" ]; then
   exit 1
 fi
 
-BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
 if [[ CODEBUILD_BUILD_SUCCEEDING -ne 0 ]]; then
     RESULT="passed"
 else
     RESULT="failed"
 fi
 
-git branch
-
-COMMIT_ID=$(git rev-parse HEAD)
-
 SOURCE="CodeBuild"
 
 BASENAME=$(basename "$CODEBUILD_SOURCE_REPO_URL")
 APPLICATION=${BASENAME%.*}
 
-LINK="https://console.aws.amazon.com/codebuild/home?region=us-east-1#/builds/$CODEBUILD_BUILD_ID/view/new"
-SUBJECT="$APPLICATION: build of $BRANCH $RESULT."
-CONTENT="<p>$SUBJECT</p><p>Commit ID: $COMMIT_ID. Message:</p><pre>$STEP_MESSAGE</pre>"
+SUBJECT="$APPLICATION: build of $CODEBUILD_GIT_BRANCH by $CODEBUILD_GIT_AUTHOR $RESULT."
+CONTENT="<p>$SUBJECT</p><p>Commit ID: $CODEBUILD_GIT_COMMIT. Message:</p><pre>$CODEBUILD_GIT_MESSAGE</pre>"
 
 
-FORMATTED_MESSAGE="{\"source\": \"$SOURCE\", \"from_address\": \"codebuildbot@codio.com\", \"subject\": \"$SUBJECT\", \"project\": \"$APPLICATION\", \"link\": \"$LINK\", \"content\": \"$CONTENT\"}"
+FORMATTED_MESSAGE="{\"source\": \"$SOURCE\", \"from_address\": \"codebuildbot@codio.com\", \"subject\": \"$SUBJECT\", \"project\": \"$APPLICATION\", \"link\": \"$CODEBUILD_BUILD_URL\", \"content\": \"$CONTENT\"}"
 
 API_URL="https://api.flowdock.com/v1/messages/team_inbox/$FLOWDOCK_NOTIFY_TOKEN"
 
