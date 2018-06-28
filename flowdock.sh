@@ -43,7 +43,7 @@ BASENAME=$(basename "$CODEBUILD_SOURCE_REPO_URL")
 APPLICATION=${BASENAME%.*}
 
 SUBJECT="$APPLICATION: build of $CODEBUILD_GIT_BRANCH by $CODEBUILD_GIT_AUTHOR $RESULT."
-CONTENT=json_escape("<p>Commit ID: $CODEBUILD_GIT_COMMIT. Message: </p><pre>$CODEBUILD_GIT_MESSAGE</pre>")
+CONTENT=json_escape "<p>Commit ID: $CODEBUILD_GIT_COMMIT. Message: </p><pre>$CODEBUILD_GIT_MESSAGE</pre>"
 
 
 FORMATTED_MESSAGE="{\"source\": \"$SOURCE\", \"from_address\": \"codebuildbot@codio.com\", \"subject\": \"$SUBJECT\", \"project\": \"$APPLICATION\", \"link\": \"$CODEBUILD_BUILD_URL\", \"content\": \"$CONTENT\"}"
